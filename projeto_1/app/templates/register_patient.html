@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Patient</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .register-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .register-container h2 {
+            margin-bottom: 20px;
+        }
+        .register-container label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+        .register-container input, .register-container textarea {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .register-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .register-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Register Patient</h2>
+        <form action="/register_patient" method="post">
+            <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}">
+            <label for="date_of_birth">Data de Nascimento:</label>
+            <input type="date" id="date_of_birth" name="date_of_birth" required>
+            <label for="medical_history">Historico medico:</label>
+            <textarea id="medical_history" name="medical_history" placeholder="Faça aqui um breve resumo do seu histórico médico..."></textarea>
+            <button type="submit">Registrar Paciente</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Biomedico</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .register-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .register-container h2 {
+            margin-bottom: 20px;
+        }
+        .register-container label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+        .register-container input {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .register-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .register-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h2>Register Biomedico</h2>
+        <form action="/register_biomedico" method="post">
+            <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}">
+            <label for="crbm">CRBM:</label>
+            <input type="text" id="crbm" name="crbm" required>
+            <label for="available_hours">Available Hours:</label>
+            <input type="text" id="available_hours" name="available_hours" placeholder="Ex: 09:00-12:00,14:00-18:00">
+            <button type="submit">Registrar Biomédico</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Appointment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .schedule-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 1200px;
+        }
+        .schedule-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .doctor-select {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .doctor-select select {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        .day {
+            background-color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .time-slot {
+            background-color: #28a745;
+            color: #fff;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .time-slot:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="schedule-container">
+        <h2>Schedule Appointment</h2>
+        <div class="doctor-select">
+            <label for="doctor">Select Doctor or Biomedico:</label>
+            <select id="doctor" name="doctor" onchange="fetchAvailableSlots()">
+                <option value="">Select a doctor or biomedico</option>
+                {% for doctor in doctors %}
+                <option value="{{ doctor.id }}">{{ doctor.specialty }} - {{ doctor.crm }}</option>
+                {% endfor %}
+                {% for biomedico in biomedicos %}
+                <option value="{{ biomedico.id }}">Biomedico - {{ biomedico.crbm }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="calendar" id="calendar">
+            <!-- Calendar slots will be populated here -->
+        </div>
+    </div>
+    <script>
+        function fetchAvailableSlots() {
+            const doctorId = document.getElementById('doctor').value;
+            if (doctorId) {
+                fetch(`/api/available_slots?doctor_id=${doctorId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const calendar = document.getElementById('calendar');
+                        calendar.innerHTML = '';
+                        data.forEach(day => {
+                            const dayDiv = document.createElement('div');
+                            dayDiv.className = 'day';
+                            dayDiv.innerHTML = `<strong>${day.date}</strong>`;
+                            day.slots.forEach(slot => {
+                                const slotDiv = document.createElement('div');
+                                slotDiv.className = 'time-slot';
+                                slotDiv.innerText = slot;
+                                dayDiv.appendChild(slotDiv);
+                            });
+                            calendar.appendChild(dayDiv);
+                        });
+                    });
+            }
+        }
+    </script>
+</body>
+</html>
