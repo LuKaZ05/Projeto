@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Health</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        .carousel-container {
+            position: relative;
+            max-width: 100%;
+            margin: auto;
+            overflow: hidden;
+            height: 50px; /* Reduzindo ainda mais a altura do carrossel */
+        }
+
+        .carousel-slide {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 50px; /* Ajuste da altura das imagens */
+            object-fit: cover;
+        }
+
+        .carousel-title {
+            position: absolute;
+            top: 5px; /* Ajuste da posição do título */
+            left: 50%;
+            transform: translateX(-50%);
+            color: #001b61;
+            font-size: 14px; /* Ajuste do tamanho da fonte do título */
+            font-weight: bold;
+            background-color: white;
+            padding: 2px 5px; /* Ajuste do padding do título */
+            border-radius: 5px;
+        }
+
+        header {
+            background-color: #001b61;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .cta {
+            background-color: #3a5bb6;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .cta:hover {
+            background-color: #294894;
+        }
+
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-size: cover; /* Faz a imagem cobrir o fundo de forma proporcional */
+            background-position: center top; /* Centraliza a parte superior da imagem */
+            background-attachment: fixed; /* Deixa a imagem fixa ao rolar a página */
+            padding: 50px 20px;
+            height: calc(100vh - 50px); /* Ajuste da altura para cobrir o restante da página */
+            margin: 0;
+            transition: background-image 1s ease-in-out; /* Transição suave para a troca de imagens */
+        }
+
+        .hero-text {
+            max-width: 50%;
+            color: white; /* Cor do texto para destacar sobre o fundo */
+        }
+
+        .hero-text h1 {
+            font-size: 36px;
+            margin: 0 0 20px;
+        }
+
+        .hero-text p {
+            font-size: 18px;
+            margin: 0 0 20px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .hero-buttons a {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .hero-buttons .btn-primary {
+            background-color: #001b61;
+        }
+
+        .hero-buttons .btn-secondary {
+            background-color: #3a5bb6;
+        }
+
+        .hero-buttons a:hover {
+            opacity: 0.9;
+        }
+
+        /* Ajustando o estilo da imagem para melhor qualidade */
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }    
+    </style>
+</head>
+<body>
+    <div class="carousel-container">
+        <div class="carousel-slide">
+            <img src="https://img.freepik.com/fotos-gratis/fundo-de-corredor-vazio_23-2149408808.jpg?t=st=1736813843~exp=1736817443~hmac=5969b93c6a085a2d1456d27e612da641cb40464cb79d46027366e41450d840dd&w=1060" alt="Clinica 1">
+            <img src="https://www.iluminiclinic.com.br/blog/wp-content/uploads/2023/02/blog-confira-porque-uma-clinica-multidisciplinar-e-a-melhor-escolha-para-sua-saude-12.jpg" alt="Clinica 2">
+            <img src="https://mingroneiluminacao.com.br/wp-content/uploads/2018/05/IMG_1386.jpg" alt="Clinica 3">
+        </div>
+        <div class="carousel-title">Our Health</div>
+    </div>
+    <header>
+        <nav>
+            <div class="logo">OUR-HEALTH</div>
+            <ul>
+                <li><a href="#">Início</a></li>
+                <li><a href="#">Sobre Nós</a></li>
+                <li><a href="#">Serviços</a></li>
+                <li><a href="#">Contato</a></li>
+            </ul>
+            <a href="/register" class="cta">Registrar-se</a>
+        </nav>
+    </header>
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero-text">
+                <p>CUIDANDO DA SUA VIDA POUPANDO O SEU TEMPO</p>
+                <h1>Liderando o Caminho na Excelência Médica</h1>
+                <div class="hero-buttons">
+                    <a href="/login" class="btn-primary">Agende uma consulta</a>
+                    <a href="/register" class="btn-secondary">Criar uma conta</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <!-- Como a imagem de fundo já foi substituída, podemos remover a imagem aqui -->
+            </div>
+        </section>
+    </main>
+    <script>
+        const carouselSlide = document.querySelector('.carousel-slide');
+        const carouselImages = document.querySelectorAll('.carousel-slide img');
+
+        let counter = 0;
+        const size = carouselImages[0].clientWidth;
+
+        function nextSlide() {
+            if (counter >= carouselImages.length - 1) counter = -1;
+            carouselSlide.style.transform = 'translateX(' + (-size * ++counter) + 'px)';
+        }
+
+        setInterval(nextSlide, 3000);
+
+        // Background image slider for hero section
+        const hero = document.getElementById('hero');
+        const heroImages = [
+            'https://img.freepik.com/fotos-gratis/equipe-de-medicos-em-pe-no-corredor_107420-84840.jpg?t=st=1736814297~exp=1736817897~hmac=8f8003d9fd5feff37897a6e3703efd00626ba1012b80fdeb293bca70bdb9798b&w=1380',
+            'https://www.iluminiclinic.com.br/blog/wp-content/uploads/2023/02/blog-confira-porque-uma-clinica-multidisciplinar-e-a-melhor-escolha-para-sua-saude-12.jpg',
+            'https://mingroneiluminacao.com.br/wp-content/uploads/2018/05/IMG_1386.jpg'
+        ];
+
+        let heroCounter = 0;
+
+        function changeHeroImage() {
+            hero.style.backgroundImage = `url(${heroImages[heroCounter]})`;
+            heroCounter = (heroCounter + 1) % heroImages.length;
+        }
+
+        setInterval(changeHeroImage, 5000); // Change image every 5 seconds
+    </script>
+</body>
+</html>

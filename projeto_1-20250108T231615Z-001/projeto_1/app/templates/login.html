@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('https://fly.metroimg.com/upload/q_85,w_700/https://uploads.metroimg.com/wp-content/uploads/2024/12/29172855/medico-39.jpg') no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            text-align: center;
+        }
+        .login-container h1 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #333;
+        }
+        .login-container p {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .login-container label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+        .login-container input {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .login-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-container button:hover {
+            background-color: #218838;
+        }
+        .login-container .links {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .login-container .links a {
+            color: inherit;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .login-container .google-login {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #fff;
+            background-color: #db4437;
+            padding: 5px 10px;
+            border-radius: 20px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .login-container .google-login img {
+            width: 16px;
+            height: 16px;
+            margin-right: 5px;
+        }
+        .register-link {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div class="login-container">
+            <h1>Clinica Aleatória</h1>
+            <p>Faça o Login para agendar sua consulta conosco</p>
+            <form action="/login" method="post">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="password">Senha:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+            {% if error %}
+            <div class="error">{{ error }}</div>
+            {% endif %}
+            <div class="links">
+                <a href="#">Esqueceu a senha?</a>
+                <div class="google-login">
+                    <img src="https://www.gstatic.com/images/branding/product/1x/gsa_16dp.png" alt="Google Logo">
+                    Google
+                </div>
+            </div>
+        </div>
+        <div class="register-link">
+            <a href="/register">Não tem uma conta? Registre-se aqui</a>
+        </div>
+    </div>
+</body>
+</html>
