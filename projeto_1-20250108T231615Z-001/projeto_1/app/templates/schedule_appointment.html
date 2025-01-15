@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcar Consultas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .schedule-container {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .no-slots {
+            text-align: center;
+            padding: 10px;
+            background-color: #ffc107;
+            color: #212529;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="schedule-container">
+        <h2>Marcar Consultas</h2>
+        <table id="slots-table">
+            <thead>
+                <tr>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Especialidade</th>
+                    <th>CRM/CRBM</th>
+                </tr>
+            </thead>
+            <tbody id="slots-tbody">
+                <!-- Available slots will be populated here -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function fetchAllAvailableSlots() {
+            fetch('/api/available_slots')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('All available slots:', data);
+                    const slotsTbody = document.getElementById('slots-tbody');
+                    slotsTbody.innerHTML = '';
+
+                    if (data.slots && data.slots.length > 0) {
+                        data.slots.forEach(slot => {
+                            const row = document.createElement('tr');
+                            const dateCell = document.createElement('td');
+                            const timeCell = document.createElement('td');
+                            const specialtyCell = document.createElement('td');
+                            const crmCrbmCell = document.createElement('td');
+
+                            dateCell.textContent = slot.date;
+                            timeCell.textContent = slot.time;
+                            specialtyCell.textContent = slot.specialty;
+                            crmCrbmCell.textContent = slot.crm_crbm;
+
+                            row.appendChild(dateCell);
+                            row.appendChild(timeCell);
+                            row.appendChild(specialtyCell);
+                            row.appendChild(crmCrbmCell);
+                            slotsTbody.appendChild(row);
+                        });
+                    } else {
+                        const noSlotsRow = document.createElement('tr');
+                        const noSlotsCell = document.createElement('td');
+                        noSlotsCell.colSpan = 4;
+                        noSlotsCell.className = 'no-slots';
+                        noSlotsCell.textContent = 'No available slots';
+                        noSlotsRow.appendChild(noSlotsCell);
+                        slotsTbody.appendChild(noSlotsRow);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching all available slots:', error);
+                });
+        }
+
+        // Fetch all available slots on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchAllAvailableSlots();
+        });
+    </script>
+</body>
+</html>

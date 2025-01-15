@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Biomédico</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa; /* Fundo branco gelo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333; /* Cor do texto preto */
+        }
+
+        .container {
+            display: flex;
+            align-items: stretch; /* Alinhar itens ao centro verticalmente */
+            gap: 300px; /* Espaçamento entre o título e o formulário */
+        }
+
+        .form-description {
+            text-align: justify; /* Justificar o texto */
+            max-width: 300px; /* Limitar a largura da descrição */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Alinhar verticalmente ao centro */
+        }
+
+        .form-description h1 {
+            font-family: 'Georgia', serif; /* Alterar a fonte do título */
+            font-size: 48px; /* Aumentar o tamanho do texto */
+            margin-bottom: 20px;
+            margin-top: 20px; /* Adicionar espaçamento superior */
+        }
+
+        .form-description h1 span {
+            display: block; /* Quebrar linha */
+        }
+
+        .form-description p {
+            font-size: 12px; /* Diminuir o tamanho do texto */
+        }
+
+        .form-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Alinhar verticalmente ao centro */
+        }
+
+        .form-container form {
+            width: 100%;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333; /* Cor do texto preto */
+        }
+
+        .form-container input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: none; /* Remover bordas */
+            border-bottom: 2px solid #333; /* Apenas linha de baixo */
+            background-color: transparent; /* Fundo transparente */
+            color: #333; /* Cor do texto preto */
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-container button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-description">
+            <h1>Registro de<br>Biomédico</h1>
+            <p>
+                Bem-vindo ao sistema de registro da nossa clínica médica! Para garantir que possamos oferecer um atendimento de qualidade e totalmente personalizado, 
+                solicitamos que você preencha o formulário a seguir com atenção e cuidado.
+            </p>
+            <p>
+                Suas informações serão mantidas em sigilo e utilizadas apenas para fins de atendimento médico. Agradecemos pela sua colaboração.
+            </p>
+        </div>
+        
+        <div class="form-container">
+            <form action="/register_biomedico" method="post">
+                <input type="hidden" id="user_id" name="user_id" value="{{ user_id }}">
+                <label for="crbm">CRBM:</label>
+                <input type="text" id="crbm" name="crbm" required>
+                <label for="available_hours">Horários Disponíveis:</label>
+                <input type="text" id="available_hours" name="available_hours" placeholder="Ex: 09:00-12:00,14:00-18:00">
+                <button type="submit">Registrar Biomédico</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

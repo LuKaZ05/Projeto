@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <style>
+        /* Estilos gerais */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: url('https://i0.wp.com/iclinic-mkt.s3.amazonaws.com/ghost-images/images/2019/08/clinicas-de-luxo.jpg?ssl=1') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .register-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            text-align: center;
+        }
+
+        .register-container h1 {
+            margin-bottom: 10px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .register-container p {
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .register-container label {
+            display: block;
+            margin-bottom: 5px;
+            text-align: left;
+        }
+
+        .register-container input, 
+        .register-container select {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .register-container select {
+            text-align: center;
+        }
+
+        .hidden-field {
+            display: none;
+            transition: all 0.3s ease-in-out; /* Transição suave */
+        }
+
+        .register-container button {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .register-container button:hover {
+            background-color: #218838;
+        }
+
+        .register-container button:focus {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <h1>Registrar Novo Usuário</h1>
+        <form action="/register" method="post">
+            <!-- Nome -->
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" placeholder="Digite seu nome" required>
+            
+            <!-- Email -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="Digite seu email" required>
+            
+            <!-- Senha -->
+            <label for="password">Senha:</label>
+            <input type="password" id="password" name="password" placeholder="Digite sua senha" required>
+            
+            <!-- Confirmar Senha -->
+            <label for="confirm_password">Confirmar Senha:</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirme sua senha" required>
+            
+            <!-- Tipo de Usuário -->
+            <label for="role">Tipo de Usuário:</label>
+            <select id="role" name="role" required onchange="toggleFields()">
+                <option value="paciente">Paciente</option>
+                <option value="médico">Médico</option>
+                <option value="biomédico">Biomédico</option>
+            </select>
+
+            <!-- Botão -->
+            <button type="submit">Registrar</button>
+        </form>
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </div>
+</body>
+</html>
