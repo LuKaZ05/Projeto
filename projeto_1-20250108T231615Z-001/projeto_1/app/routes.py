@@ -115,10 +115,19 @@ def register():
         db.session.add(new_user)
         db.session.commit()
 
-        return jsonify({"message": "User registered successfully"}), 201
+        # Redireciona para a rota específica com base no papel do usuário (role)
+        if role == 'medico':
+            return redirect(url_for('main.register_doctor', user_id=new_user.id))
+        elif role == 'biomedico':
+            return redirect(url_for('main.register_biomedico', user_id=new_user.id))
+        elif role == 'paciente':
+            return redirect(url_for('main.register_patient', user_id=new_user.id))
+        else:
+            return render_template('register.html', error="Invalid role selected")
     except Exception as e:
-        print(f"Error registering user: {e}")
-        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+        print(f"Error during registration: {e}")
+        return render_template('register.html', error="Internal Server Error")
+
 
 
 @main.route('/api/register_appointment', methods=['POST'])
