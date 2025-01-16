@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, render_template, redirect, url_for, session
-from app.models import db, User, Doctor, Patient, Biomedico
-from datetime import datetime
+from app.models import db, User, Doctor, Patient, Biomedico, Appointment
+from datetime import datetime, date, time
 
 main = Blueprint('main', __name__)
 
@@ -31,6 +31,7 @@ def schedule_appointment():
     doctors = Doctor.query.all()
     biomedicos = Biomedico.query.all()
     return render_template('schedule_appointment.html', doctors=doctors, biomedicos=biomedicos)
+
 @main.route('/api/available_slots', methods=['GET'])
 def get_available_slots():
     try:
@@ -47,8 +48,10 @@ def get_available_slots():
                         date_time = hour.split('-')
                         if len(date_time) == 2:
                             slots_list.append({
+                                "id": doctor.id,
+                                "role": "doctor",
                                 "date": "2023-10-01",  # Ajuste conforme necessário
-                                "time": date_time[0] + " - " + date_time[1]
+                                "time": f"{date_time[0]} - {date_time[1]}"
                             })
                         else:
                             print(f"Invalid format in doctor {doctor.specialty} available_hours: {hour}")
@@ -63,8 +66,10 @@ def get_available_slots():
                         date_time = hour.split('-')
                         if len(date_time) == 2:
                             slots_list.append({
+                                "id": biomedico.id,
+                                "role": "biomedico",
                                 "date": "2023-10-01",  # Ajuste conforme necessário
-                                "time": date_time[0] + " - " + date_time[1]
+                                "time": f"{date_time[0]} - {date_time[1]}"
                             })
                         else:
                             print(f"Invalid format in biomedico CRBM {biomedico.crbm} available_hours: {hour}")
@@ -90,33 +95,99 @@ def show_tables():
     except Exception as e:
         print(f"Unexpected error: {e}")
         return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+
 @main.route('/register', methods=['GET'])
 def register_page():
     return render_template('register.html')
 
 @main.route('/register', methods=['POST'])
 def register():
-    name = request.form.get('name')
-    email = request.form.get('email')
-    password = request.form.get('password')
-    role = request.form.get('role')
+    try:
+        data = request.form
+        email = data.get('email')
+        password = data.get('password')
+        role = data.get('role')
 
-    if User.query.filter_by(email=email).first():
-        return jsonify({"error": "Email already registered"}), 400
+        if not email or not password or not role:
+            return jsonify({"error": "Missing required fields"}), 400
 
-    user = User(name=name, email=email, password=password, role=role)
-    db.session.add(user)
-    db.session.commit()
+        new_user = User(email=email, password=password, role=role)
+        db.session.add(new_user)
+        db.session.commit()
 
-    if role == 'médico':
-        crm = request.form.get('crm')
-        return redirect(url_for('main.register_doctor_page', user_id=user.id, crm=crm))
-    elif role == 'biomédico':
-        return redirect(url_for('main.register_biomedico_page', user_id=user.id))
-    elif role == 'paciente':
-        return redirect(url_for('main.register_patient_page', user_id=user.id))
-    else:
-        return redirect(url_for('main.success'))
+        return jsonify({"message": "User registered successfully"}), 201
+    except Exception as e:
+        print(f"Error registering user: {e}")
+        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+
+
+@main.route('/api/register_appointment', methods=['POST'])
+def register_appointment():
+    try:
+        data = request.json
+        appointments = data.get('appointments', [])
+        
+        for appointment in appointments:
+            print(f"Received appointment: {appointment}")
+            try:
+                parts = appointment.split('-')
+                print(f"Parts: {parts}")  # Log the parts
+                if len(parts) != 6:
+                    raise ValueError(f"Expected 6 parts but got {len(parts)}: {parts}")
+                slot_id = parts[0]
+                date_str = f"{parts[1]}-{parts[2]}-{parts[3]}"
+                time_start_str = parts[4].strip()
+                time_end_str = parts[5].strip()
+                print(f"slot_id: {slot_id}, date: {date_str}, time_start: {time_start_str}, time_end: {time_end_str}")  # Log the values
+
+                # Convert strings to date and time objects
+                date_obj = datetime.strptime(date_str, "%Y-%m-%d").date()
+                time_start_obj = datetime.strptime(time_start_str, "%H:%M").time()
+                time_end_obj = datetime.strptime(time_end_str, "%H:%M").time()
+                print(f"Converted date: {date_obj}, time_start: {time_start_obj}, time_end: {time_end_obj}")  # Log the converted values
+
+                # Check if the appointment slot is already taken
+                existing_appointment = Appointment.query.filter_by(date=date_obj, time=time_start_obj).first()
+                if existing_appointment:
+                    return jsonify({"error": "Horário desejado, já foi utilizado"}), 400
+
+            except ValueError as ve:
+                print(f"Error unpacking appointment: {ve}")
+                return jsonify({"error": "Invalid appointment format", "details": str(ve)}), 400
+            
+            print(f"Processing appointment: slot_id={slot_id}, date={date_obj}, time_start={time_start_obj}, time_end={time_end_obj}")
+            
+            # Determine role and specialty based on slot_id
+            doctor = Doctor.query.filter_by(id=slot_id).first()
+            biomedico = Biomedico.query.filter_by(id=slot_id).first()
+            
+            if doctor:
+                print(f"Doctor found: {doctor}")
+                role = 'doctor'
+                specialty = doctor.specialty
+                doctor_id = doctor.id
+                biomedico_id = None
+            elif biomedico:
+                print(f"Biomedico found: {biomedico}")
+                role = 'biomedico'
+                specialty = biomedico.specialty
+                doctor_id = None
+                biomedico_id = biomedico.id
+            else:
+                print(f"Invalid slot ID: {slot_id}")
+                print(f"Available doctor IDs: {[doctor.id for doctor in Doctor.query.all()]}")
+                print(f"Available biomedico IDs: {[biomedico.id for biomedico in Biomedico.query.all()]}")
+                return jsonify({"error": "Invalid slot ID"}), 400
+            
+            new_appointment = Appointment(doctor_id=doctor_id, biomedico_id=biomedico_id, patient_id=session['user_id'], date=date_obj, time=time_start_obj, status='scheduled')
+            db.session.add(new_appointment)
+        
+        db.session.commit()
+        return jsonify({"message": "Appointments registered successfully"}), 200
+    except Exception as e:
+        print(f"Error registering appointment: {e}")
+        return jsonify({"error": "Internal Server Error", "details": str(e)}), 500
+
 
 @main.route('/register_doctor', methods=['GET'])
 def register_doctor_page():

@@ -16,6 +16,6 @@ def create_app():
         from .routes import main
         app.register_blueprint(main)
         print(app.url_map)
-        db.create_all()  # Adicione esta linha para criar todas as tabelas
+        db.create_all()  # Cria todas as tabelas
 
     return app

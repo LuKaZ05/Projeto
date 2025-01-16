@@ -25,7 +25,8 @@ class Biomedico(db.Model):
 
 class Appointment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=False)
+    doctor_id = db.Column(db.Integer, db.ForeignKey('doctor.id'), nullable=True)
+    biomedico_id = db.Column(db.Integer, db.ForeignKey('biomedico.id'), nullable=True)
     patient_id = db.Column(db.Integer, db.ForeignKey('patient.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
     time = db.Column(db.Time, nullable=False)

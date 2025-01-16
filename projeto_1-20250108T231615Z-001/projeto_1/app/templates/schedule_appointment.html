@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marcar Consultas</title>
+    <title>Agendamento de Consultas</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,66 +11,251 @@
             padding: 0;
             background-color: #f8f9fa;
             display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1500px;
+            height: 100vh;
+        }
+
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: width 0.3s;
+            display: flex;
             flex-direction: column;
+            justify-content: flex-start;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .sidebar.collapsed {
+            width: 50px;
+        }
+
+        .sidebar.collapsed h2,
+        .sidebar.collapsed .sidebar-btn,
+        .sidebar.collapsed .filter-container {
+            display: none;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+        }
+
+        .sidebar-btn {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-btn:hover {
+            background-color: #004494;
+        }
+
+        .toggle-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .toggle-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .filter-container {
+            margin-top: 20px;
+        }
+
+        .filter-container label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .filter-container select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .calendar-container {
+            flex-grow: 1;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-left: 250px;
+            transition: margin-left 0.3s;
+            padding: 0 20px 20px 20px;
+            height: 100vh;
+        }
+
+        .calendar-container.collapsed {
+            margin-left: 50px;
+        }
+
+        .calendar-header {
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            font-size: 1.2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+        }
+
+        .calendar-header .register-btn {
+            background-color: #004494;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+
+        .calendar-header .register-btn:hover {
+            background-color: #003366;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            border: 1px solid #ddd;
+            border-radius: 0 0 10px 10px;
+            height: calc(100vh - 60px); /* Adjust height to fill the remaining space */
+        }
+
+        .calendar div {
+            border: 1px solid #ddd;
+            padding: 2px;
+            min-height: 100px;
+            position: relative;
+            border-radius: 5px;
+        }
+
+        .calendar .day {
+            background-color: #f0f0f0;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.8em;
+            border-radius: 5px;
+        }
+
+        .calendar .event {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            padding: 1px;
+            font-size: 0.6em;
+            margin-top: 1px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            display: flex;
             align-items: center;
         }
 
-        .schedule-container {
-            width: 100%;
-            max-width: 800px;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            margin-top: 20px;
+        .calendar .event input[type="checkbox"] {
+            margin-right: 5px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
+        .calendar .event img {
+            width: 15px;
+            height: 15px;
+            vertical-align: middle;
+            margin-right: 3px;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
+        .calendar .event.scheduled {
+            background-color: #d4edda;
+            color: #155724;
         }
 
-        th {
-            background-color: #007bff;
-            color: white;
-        }
-
-        .no-slots {
-            text-align: center;
-            padding: 10px;
-            background-color: #ffc107;
-            color: #212529;
-            border-radius: 5px;
+        .calendar .event.scheduled input[type="checkbox"] {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="schedule-container">
-        <h2>Marcar Consultas</h2>
-        <table id="slots-table">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Especialidade</th>
-                    <th>CRM/CRBM</th>
-                </tr>
-            </thead>
-            <tbody id="slots-tbody">
-                <!-- Available slots will be populated here -->
-            </tbody>
-        </table>
+    <div class="container">
+        <div class="sidebar" id="sidebar">
+            <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+            <h2>Agendar Consulta</h2>
+            <div class="filter-container">
+                <label for="role-select">Filtrar por:</label>
+                <select id="role-select" onchange="fetchAvailableSlots()">
+                    <option value="doctor">Médico</option>
+                    <option value="biomedico">Biomédico</option>
+                </select>
+                <label for="specialty-select">Especialidade:</label>
+                <select id="specialty-select" onchange="fetchAvailableSlots()">
+                    <option value="cardiology">Cardiologia</option>
+                    <option value="dermatology">Dermatologia</option>
+                    <option value="neurology">Neurologia</option>
+                    <!-- Adicione outras especialidades conforme necessário -->
+                </select>
+            </div>
+        </div>
+        <div class="calendar-container" id="calendar-container">
+            <div class="calendar-header">
+                Agendamento
+                <button class="register-btn" id="register-btn" onclick="registerAppointment()">Registrar Consulta</button>
+            </div>
+            <div class="calendar" id="calendar">
+                <!-- Days of the week -->
+                <div class="day">Monday</div>
+                <div class="day">Tuesday</div>
+                <div class="day">Wednesday</div>
+                <div class="day">Thursday</div>
+                <div class="day">Friday</div>
+                <div class="day">Saturday</div>
+                <div class="day">Sunday</div>
+                <!-- Slots will be populated here -->
+                <div class="slots" data-day="1"></div>
+                <div class="slots" data-day="2"></div>
+                <div class="slots" data-day="3"></div>
+                <div class="slots" data-day="4"></div>
+                <div class="slots" data-day="5"></div>
+                <div class="slots" data-day="6"></div>
+                <div class="slots" data-day="0"></div>
+            </div>
+        </div>
     </div>
+
     <script>
-        function fetchAllAvailableSlots() {
-            fetch('/api/available_slots')
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const calendarContainer = document.getElementById('calendar-container');
+            sidebar.classList.toggle('collapsed');
+            calendarContainer.classList.toggle('collapsed');
+        }
+
+        function fetchAvailableSlots() {
+            const role = document.getElementById('role-select').value;
+            const specialty = document.getElementById('specialty-select').value;
+            fetch(`/api/available_slots?role=${role}&specialty=${specialty}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -78,47 +263,87 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log('All available slots:', data);
-                    const slotsTbody = document.getElementById('slots-tbody');
-                    slotsTbody.innerHTML = '';
+                    const calendar = document.getElementById('calendar');
+                    const slotsDivs = document.querySelectorAll('.slots');
 
-                    if (data.slots && data.slots.length > 0) {
-                        data.slots.forEach(slot => {
-                            const row = document.createElement('tr');
-                            const dateCell = document.createElement('td');
-                            const timeCell = document.createElement('td');
-                            const specialtyCell = document.createElement('td');
-                            const crmCrbmCell = document.createElement('td');
+                    // Clear previous events
+                    slotsDivs.forEach(div => div.innerHTML = '');
 
-                            dateCell.textContent = slot.date;
-                            timeCell.textContent = slot.time;
-                            specialtyCell.textContent = slot.specialty;
-                            crmCrbmCell.textContent = slot.crm_crbm;
+                    // Populate events for each day of the week
+                    data.slots.forEach(slot => {
+                        const eventDiv = document.createElement('div');
+                        eventDiv.className = 'event';
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = `${slot.id}-${slot.date}-${slot.time}`;
+                        const eventText = document.createTextNode(`${slot.time}`);
+                        eventDiv.appendChild(checkbox);
+                        eventDiv.appendChild(eventText);
 
-                            row.appendChild(dateCell);
-                            row.appendChild(timeCell);
-                            row.appendChild(specialtyCell);
-                            row.appendChild(crmCrbmCell);
-                            slotsTbody.appendChild(row);
-                        });
-                    } else {
-                        const noSlotsRow = document.createElement('tr');
-                        const noSlotsCell = document.createElement('td');
-                        noSlotsCell.colSpan = 4;
-                        noSlotsCell.className = 'no-slots';
-                        noSlotsCell.textContent = 'No available slots';
-                        noSlotsRow.appendChild(noSlotsCell);
-                        slotsTbody.appendChild(noSlotsRow);
-                    }
+                        if (slot.status === 'scheduled') {
+                            eventDiv.classList.add('scheduled');
+                            eventDiv.innerHTML = `<span>${slot.time} - ${slot.patient_name}</span>`;
+                        }
+
+                        // Append the event to the correct day column
+                        const dayIndex = new Date(slot.date).getDay(); // 0 (Sunday) to 6 (Saturday)
+                        const dayColumn = document.querySelector(`.slots[data-day="${dayIndex}"]`);
+                        dayColumn.appendChild(eventDiv);
+                    });
                 })
                 .catch(error => {
                     console.error('Error fetching all available slots:', error);
                 });
         }
 
+        function registerAppointment() {
+            const selectedSlots = document.querySelectorAll('.event input[type="checkbox"]:checked');
+            const appointments = Array.from(selectedSlots).map(slot => slot.value);
+
+            if (appointments.length === 0) {
+                alert('Por favor, selecione um horário disponível.');
+                return;
+            }
+
+            // Check if any selected slot is already scheduled
+            const scheduledSlots = document.querySelectorAll('.event.scheduled input[type="checkbox"]');
+            const scheduledAppointments = Array.from(scheduledSlots).map(slot => slot.value);
+
+            for (const appointment of appointments) {
+                if (scheduledAppointments.includes(appointment)) {
+                    alert('O horário já foi agendado.');
+                    return;
+                }
+            }
+
+            fetch('/api/register_appointment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ appointments })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(errorData.error);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Consulta registrada com sucesso!');
+                fetchAvailableSlots(); // Refresh the available slots
+            })
+            .catch(error => {
+                alert(`Erro ao registrar consulta: ${error.message}`);
+                console.error('Error registering appointment:', error);
+            });
+        }
+
         // Fetch all available slots on page load
         document.addEventListener('DOMContentLoaded', () => {
-            fetchAllAvailableSlots();
+            fetchAvailableSlots();
         });
     </script>
 </body>
