@@ -19,7 +19,6 @@
         .container {
             display: flex;
             width: 100%;
-            max-width: 1500px;
             height: 100vh;
         }
 
@@ -38,6 +37,7 @@
             left: 0;
             top: 0;
             bottom: 0;
+            z-index: 1000;
         }
 
         .sidebar.collapsed {
@@ -196,6 +196,25 @@
         .calendar .event.scheduled input[type="checkbox"] {
             display: none;
         }
+
+        /* Responsividade */
+        @media (min-width: 1024px) {
+            .sidebar {
+                width: 300px;
+            }
+
+            .sidebar.collapsed {
+                width: 60px;
+            }
+
+            .calendar-container {
+                margin-left: 300px;
+            }
+
+            .calendar-container.collapsed {
+                margin-left: 60px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -214,7 +233,6 @@
                     <option value="cardiology">Cardiologia</option>
                     <option value="dermatology">Dermatologia</option>
                     <option value="neurology">Neurologia</option>
-                    <!-- Adicione outras especialidades conforme necessário -->
                 </select>
             </div>
         </div>
@@ -224,7 +242,6 @@
                 <button class="register-btn" id="register-btn" onclick="registerAppointment()">Registrar Consulta</button>
             </div>
             <div class="calendar" id="calendar">
-                <!-- Days of the week -->
                 <div class="day">Monday</div>
                 <div class="day">Tuesday</div>
                 <div class="day">Wednesday</div>
@@ -232,7 +249,6 @@
                 <div class="day">Friday</div>
                 <div class="day">Saturday</div>
                 <div class="day">Sunday</div>
-                <!-- Slots will be populated here -->
                 <div class="slots" data-day="1"></div>
                 <div class="slots" data-day="2"></div>
                 <div class="slots" data-day="3"></div>
@@ -256,95 +272,25 @@
             const role = document.getElementById('role-select').value;
             const specialty = document.getElementById('specialty-select').value;
             fetch(`/api/available_slots?role=${role}&specialty=${specialty}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    const calendar = document.getElementById('calendar');
                     const slotsDivs = document.querySelectorAll('.slots');
-
-                    // Clear previous events
                     slotsDivs.forEach(div => div.innerHTML = '');
-
-                    // Populate events for each day of the week
                     data.slots.forEach(slot => {
                         const eventDiv = document.createElement('div');
                         eventDiv.className = 'event';
                         const checkbox = document.createElement('input');
                         checkbox.type = 'checkbox';
                         checkbox.value = `${slot.id}-${slot.date}-${slot.time}`;
-                        const eventText = document.createTextNode(`${slot.time}`);
                         eventDiv.appendChild(checkbox);
-                        eventDiv.appendChild(eventText);
-
-                        if (slot.status === 'scheduled') {
-                            eventDiv.classList.add('scheduled');
-                            eventDiv.innerHTML = `<span>${slot.time} - ${slot.patient_name}</span>`;
-                        }
-
-                        // Append the event to the correct day column
-                        const dayIndex = new Date(slot.date).getDay(); // 0 (Sunday) to 6 (Saturday)
-                        const dayColumn = document.querySelector(`.slots[data-day="${dayIndex}"]`);
-                        dayColumn.appendChild(eventDiv);
+                        eventDiv.appendChild(document.createTextNode(`${slot.time}`));
+                        const dayIndex = new Date(slot.date).getDay();
+                        document.querySelector(`.slots[data-day="${dayIndex}"]`).appendChild(eventDiv);
                     });
-                })
-                .catch(error => {
-                    console.error('Error fetching all available slots:', error);
                 });
         }
 
-        function registerAppointment() {
-            const selectedSlots = document.querySelectorAll('.event input[type="checkbox"]:checked');
-            const appointments = Array.from(selectedSlots).map(slot => slot.value);
-
-            if (appointments.length === 0) {
-                alert('Por favor, selecione um horário disponível.');
-                return;
-            }
-
-            // Check if any selected slot is already scheduled
-            const scheduledSlots = document.querySelectorAll('.event.scheduled input[type="checkbox"]');
-            const scheduledAppointments = Array.from(scheduledSlots).map(slot => slot.value);
-
-            for (const appointment of appointments) {
-                if (scheduledAppointments.includes(appointment)) {
-                    alert('O horário já foi agendado.');
-                    return;
-                }
-            }
-
-            fetch('/api/register_appointment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ appointments })
-            })
-            .then(response => {
-                if (!response.ok) {
-                    return response.json().then(errorData => {
-                        throw new Error(errorData.error);
-                    });
-                }
-                return response.json();
-            })
-            .then(data => {
-                alert('Consulta registrada com sucesso!');
-                fetchAvailableSlots(); // Refresh the available slots
-            })
-            .catch(error => {
-                alert(`Erro ao registrar consulta: ${error.message}`);
-                console.error('Error registering appointment:', error);
-            });
-        }
-
-        // Fetch all available slots on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchAvailableSlots();
-        });
+        document.addEventListener('DOMContentLoaded', fetchAvailableSlots);
     </script>
 </body>
 </html>
